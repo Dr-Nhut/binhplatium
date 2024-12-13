@@ -1,7 +1,12 @@
 const express = require('express');
+require('dotenv').config();
 const http = require('http');
 const { Server } = require('socket.io');
 const { io: ClientIO } = require('socket.io-client'); // Dùng để kết nối tới Python server
+const connectDb = require('./src/config/db');
+const DeviceCheck = require('./src/models/deviceCheck')
+
+connectDb();
 
 const app = express();
 const server = http.createServer(app);
@@ -22,13 +27,21 @@ io.on('connection', (socket) => {
   console.log('Client connected');
 
   // Nhận yêu cầu từ client và chuyển tới Python server
-  socket.on('ml_request', (data) => {
-    console.log('Request from client:', data);
-    pythonSocket.emit('process', data); // Gửi dữ liệu tới Python server
+  socket.on('checking', (data) => {
+    pythonSocket.emit('checking'); // Gửi dữ liệu tới Python server
   });
 
   // Nhận phản hồi từ Python và gửi lại client
-  pythonSocket.on('result', (result) => {
+  pythonSocket.on('result', async (result) => {
+    // {
+    //   devices: {
+    // name: string;
+    // quantity: number;
+    // },
+    // checkedAt: NativeDate;
+    // }
+    const deviveCheck = new DeviceCheck(result);
+    await deviveCheck.save();
     socket.emit('ml_response', result);
   });
 
