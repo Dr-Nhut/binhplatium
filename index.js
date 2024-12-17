@@ -9,6 +9,19 @@ const DeviceCheck = require('./src/models/deviceCheck')
 connectDb();
 
 const app = express();
+
+app.set('view engine', 'pug');
+app.set('views', './src/views');
+
+app.use(express.urlencoded({ extended: true }));
+
+app.get('/', async (req, res) => {
+  const lastCheck = await DeviceCheck.findOne().sort({ checkedAt: -1 }).exec();
+  const devices = lastCheck ? lastCheck.devices : [];
+  res.render('devices', { devices });
+});
+
+
 const server = http.createServer(app);
 const io = new Server(server);
 
@@ -28,6 +41,7 @@ io.on('connection', (socket) => {
 
   // Nhận yêu cầu từ client và chuyển tới Python server
   socket.on('checking', (data) => {
+    console.log('Checking devices...');
     pythonSocket.emit('checking'); // Gửi dữ liệu tới Python server
   });
 
@@ -38,8 +52,11 @@ io.on('connection', (socket) => {
     // name: string;
     // quantity: number;
     // },
-    // checkedAt: NativeDate;
+    // checkedAt: datetime;
     // }
+
+    console.log('Received result from Python:', result);
+
     const deviveCheck = new DeviceCheck(result);
     await deviveCheck.save();
     socket.emit('ml_response', result);

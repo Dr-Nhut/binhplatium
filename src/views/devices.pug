@@ -1,0 +1,45 @@
+doctype html
+html
+  head
+    title Device List
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css')
+  body
+    .container.mt-5
+      h1.text-center.mb-4 Danh sách thiết bị
+      if devices && devices.length > 0
+        table.table.table-bordered
+          thead
+            tr
+              th Tên thiết bị
+              th Số lượng
+          tbody#device-list
+            each device in devices
+              tr
+                td= device.name
+                td= device.quantity
+      else
+        p.text-center.text-muted Chưa có lịch sử tìm kiếm.
+
+      .text-center.mt-4
+        button#checking.btn.btn-primary Checking
+
+      script(src="/socket.io/socket.io.js")
+      script.
+        const socket = io();
+        document.getElementById('checking').addEventListener('click', () => {
+          socket.emit('checking');
+        });
+
+        socket.on('ml_response', (data) => {
+          const deviceList = document.getElementById('device-list');
+          deviceList.innerHTML = ''; 
+          if (data.devices && data.devices.length > 0) {
+            data.devices.forEach(device => {
+              const row = document.createElement('tr');
+              row.innerHTML = `<td>${device.name}</td><td>${device.quantity}</td>`;
+              deviceList.appendChild(row);
+            });
+          }
+        });
