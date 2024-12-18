@@ -6,7 +6,16 @@ html
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css')
   body
+    nav.navbar.navbar-expand-lg.navbar-light.bg-primary
+      .container-fluid
+        a.navbar-brand(href='/')
+          img(src='asset/Logo_IUH.png', alt='Logo', style='max-height: 40px; margin-right: 10px;')
+          span(style='color: white') Quản lý thiết bị phòng thực hành   
     .container.mt-5
+      h1.text-center.mt-5 Phòng thực hành X7.16 
+      .text-center
+        video#video-stream(controls autoplay muted playsinline, style='width: 100%; max-width: 800px; border: 1px solid #ddd;') 
+          | stream raspberry
       h1.text-center.mb-4 Danh sách thiết bị
       if devices && devices.length > 0
         // Bảng các thiết bị bình thường
@@ -16,7 +25,7 @@ html
             tr
               th Tên thiết bị
               th Số lượng
-              th Thời gian
+              th Thời gian kiểm tra
           tbody#device-list
             each device in devices
               if !device.missing
@@ -26,13 +35,13 @@ html
                   td= new Date(device.checkedAt).toLocaleString()
 
         // Bảng các vật phẩm bị mất
-        h2 Vật phẩm bị mất
+        h2 Thiết bị không tìm thấy
         table.table.table-bordered
           thead
             tr
               th Tên thiết bị
               th Số lượng
-              th Thời gian
+              th Thời gian kiểm tra
           tbody#missing-list
             each device in devices
               if device.missing
@@ -42,7 +51,7 @@ html
                   td= new Date(device.checkedAt).toLocaleString()
       else
         p.text-center.text-muted Chưa có lịch sử tìm kiếm.
-
+       
       .text-center.mt-4
         button#checking.btn.btn-primary Checking
 

@@ -9,10 +9,9 @@ const DeviceCheck = require("./src/models/deviceCheck");
 connectDb();
 
 const app = express();
-
+app.use(express.static("public"));
 app.set("view engine", "pug");
 app.set("views", "./src/views");
-
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", async (req, res) => {
