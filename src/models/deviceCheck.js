@@ -1,17 +1,25 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const deviceSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true
+const deviceSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    missing: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
-  quantity: {
-    type: Number,
-    required: true,
-    min: 0
-  }
-}, { _id: false });
+  { _id: false }
+);
 
 const deviceCheckSchema = new mongoose.Schema({
   devices: {
@@ -20,10 +28,10 @@ const deviceCheckSchema = new mongoose.Schema({
   },
   checkedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-const DeviceCheck = mongoose.model('DeviceCheck', deviceCheckSchema);
+const DeviceCheck = mongoose.model("DeviceCheck", deviceCheckSchema);
 
 module.exports = DeviceCheck;
