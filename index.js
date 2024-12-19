@@ -66,6 +66,24 @@ io.on("connection", (socket) => {
     socket.emit("ml_response", data);
     io.emit("ml_response", data);
   });
+
+  // ToDo: streaming
+  // Khi client yêu cầu bật camera
+  socket.on('start_camera', () => {
+    console.log('Start camera requested');
+    pythonSocket.emit('start_camera');
+  });
+
+  // Chuyển tiếp frame từ Python tới client
+  pythonSocket.on('camera_frame', (data) => {
+    socket.emit('camera_frame', data);
+  });
+
+  // Chuyển tiếp lỗi camera từ Python tới client
+  pythonSocket.on('camera_error', (data) => {
+    socket.emit('camera_error', data);
+  });
+
 });
 
 server.listen(3000, () => {

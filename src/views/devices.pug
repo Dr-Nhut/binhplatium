@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title Device List
+    title Quản lý thiết bị phòng thực hành
     meta(charset='UTF-8')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css')
@@ -14,8 +14,14 @@ html
     .container.mt-5
       h1.text-center.mt-5 Phòng thực hành X7.16 
       .text-center
-        video#video-stream(controls autoplay muted playsinline, style='width: 100%; max-width: 800px; border: 1px solid #ddd;') 
-          | stream raspberry
+        button#start-camera.btn.btn-primary Mở camara
+      .mt-4.text-center
+        img#camera-stream(
+          src='',
+          alt='Waiting for camera...',
+          style='max-width: 100%; border: 1px solid #ccc;'
+        )
+        
       h1.text-center.mb-4 Danh sách thiết bị
       if devices && devices.length > 0
         // Bảng các thiết bị bình thường
@@ -54,7 +60,7 @@ html
        
       .text-center.mt-4
         button#checking.btn.btn-primary Checking
-
+    
       script(src="/socket.io/socket.io.js")
       script.
         const socket = io();
@@ -81,4 +87,20 @@ html
               }
             });
           }
+        });
+
+        // Start camera stream
+        document.getElementById('start-camera').addEventListener('click', () => {
+          socket.emit('start_camera');
+        });
+
+        // Receive and display camera frame
+        socket.on('camera_frame', (data) => {
+          const imgElement = document.getElementById('camera-stream');
+          imgElement.src = `data:image/jpeg;base64,${data.frame}`;
+        });
+
+        // Handle camera errors
+        socket.on('camera_error', (data) => {
+          alert(data.message);
         });
