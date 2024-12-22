@@ -30,8 +30,8 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 // Kết nối tới Python server
-// const pythonSocket = ClientIO("http://192.168.1.25:5000");
-const pythonSocket = ClientIO("http://localhost:5000");
+const pythonSocket = ClientIO("http://192.168.1.25:5000");
+// const pythonSocket = ClientIO("http://localhost:5000");
 // const pythonSocket = ClientIO("http://192.168.1.71:5000");
 // const pythonSocket = ClientIO("http://192.168.7.116:5000");
 

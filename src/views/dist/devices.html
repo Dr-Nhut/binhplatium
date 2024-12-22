@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Quản lý thiết bị phòng thực hành</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+      <div class="container-fluid"><a class="navbar-brand" href="/"><img src="asset/Logo_IUH.png" alt="Logo" style="max-height: 40px; margin-right: 10px;"><span style="color: white">Quản lý thiết bị phòng thực hành   </span></a></div>
+    </nav>
+    <div class="container mt-5">
+      <h1 class="text-center mt-5">Phòng thực hành X7.6 </h1>
+      <div class="text-center">
+        <button class="btn btn-primary" id="start-camera">Mở camara</button>
+      </div>
+      <div class="mt-4 text-center"><img id="camera-stream" src="http://192.168.1.25:5000/video" alt="Waiting for camera..." style="max-width: 100%; border: 1px solid #ccc;"></div>
+      <h1 class="text-center mb-4">Danh sách thiết bị</h1>
+      <p class="text-center text-muted">Chưa có lịch sử tìm kiếm.</p>
+      <div class="text-center mt-4">
+        <button class="btn btn-primary" id="checking">Checking</button>
+      </div>
+      <script src="/socket.io/socket.io.js"></script>
+      <script>
+        const socket = io();
+        document.getElementById('checking').addEventListener('click', () => {
+          socket.emit('checking');
+        });
+        
+        socket.on('ml_response', (data) => {
+          const deviceList = document.getElementById('device-list');
+          const missingList = document.getElementById('missing-list');
+          deviceList.innerHTML = ''; 
+          missingList.innerHTML = '';
+          if (data.devices && data.devices.length > 0) {
+            data.devices.forEach(device => {
+              const rowHtml = `
+                <td>${device.name}</td>
+                <td>${device.quantity}</td>
+                <td>${new Date(data.checkedAt).toLocaleString()}</td>
+              `;
+              if (device.missing) {
+                missingList.innerHTML += `<tr>${rowHtml}</tr>`;
+              } else {
+                deviceList.innerHTML += `<tr>${rowHtml}</tr>`;
+              }
+            });
+          }
+        });
+        
+        // Start camera stream
+        document.getElementById('start-camera').addEventListener('click', () => {
+          socket.emit('start_camera');
+        });
+        
+        // Receive and display camera frame
+        socket.on('camera_frame', (data) => {
+          const imgElement = document.getElementById('camera-stream');
+          imgElement.src = `data:image/jpeg;base64,${data.frame}`;
+        });
+        
+        // Handle camera errors
+        socket.on('camera_error', (data) => {
+          alert(data.message);
+        });
+      </script>
+    </div>
+  </body>
+</html>
