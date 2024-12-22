@@ -17,6 +17,10 @@ const deviceSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    // checkedAt: {
+    //   type: Date,
+    //   default: Date.now,
+    // },
   },
   { _id: false }
 );

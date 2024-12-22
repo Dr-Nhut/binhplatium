@@ -12,15 +12,20 @@ html
           img(src='asset/Logo_IUH.png', alt='Logo', style='max-height: 40px; margin-right: 10px;')
           span(style='color: white') Quản lý thiết bị phòng thực hành   
     .container.mt-5
-      h1.text-center.mt-5 Phòng thực hành X7.16 
+      h1.text-center.mt-5 Phòng thực hành X7.6 
       .text-center
         button#start-camera.btn.btn-primary Mở camara
       .mt-4.text-center
         img#camera-stream(
-          src='',
+          src='http://192.168.1.25:5000/video',
           alt='Waiting for camera...',
           style='max-width: 100%; border: 1px solid #ccc;'
-        )
+        ) 
+        //- img#camera-stream(
+        //-   src='http://localhost:5000',
+        //-   alt='Waiting for camera...',
+        //-   style='max-width: 100%; border: 1px solid #ccc;'
+        //- )
         
       h1.text-center.mb-4 Danh sách thiết bị
       if devices && devices.length > 0
@@ -78,7 +83,7 @@ html
               const rowHtml = `
                 <td>${device.name}</td>
                 <td>${device.quantity}</td>
-                <td>${new Date(device.checkedAt).toLocaleString()}</td>
+                <td>${new Date(data.checkedAt).toLocaleString()}</td>
               `;
               if (device.missing) {
                 missingList.innerHTML += `<tr>${rowHtml}</tr>`;

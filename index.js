@@ -20,11 +20,20 @@ app.get("/", async (req, res) => {
   res.render("devices", { devices });
 });
 
+app.get("/all", async (req, res) => {
+  const lastCheck = await DeviceCheck.findOne();
+
+  res.json({ lastCheck });
+});
+
 const server = http.createServer(app);
 const io = new Server(server);
 
 // Kết nối tới Python server
+// const pythonSocket = ClientIO("http://192.168.1.25:5000");
 const pythonSocket = ClientIO("http://localhost:5000");
+// const pythonSocket = ClientIO("http://192.168.1.71:5000");
+// const pythonSocket = ClientIO("http://192.168.7.116:5000");
 
 pythonSocket.on("connect", () => {
   console.log("Connected to Python server");
@@ -59,31 +68,31 @@ io.on("connection", (socket) => {
 
   socket.on("python_data", async (data) => {
     console.log("Received data from Python client:", data);
-
     const deviceCheck = new DeviceCheck(data);
     await deviceCheck.save();
-
     socket.emit("ml_response", data);
     io.emit("ml_response", data);
   });
 
   // ToDo: streaming
   // Khi client yêu cầu bật camera
-  socket.on('start_camera', () => {
-    console.log('Start camera requested');
-    pythonSocket.emit('start_camera');
+  socket.on("start_camera", () => {
+    console.log("Start camera requested");
+    pythonSocket.emit("start_camera");
   });
 
   // Chuyển tiếp frame từ Python tới client
-  pythonSocket.on('camera_frame', (data) => {
-    socket.emit('camera_frame', data);
+  pythonSocket.on("camera_frame", (data) => {
+    console.log("camera_frame", data);
+    socket.emit("camera_frame", data);
+    // const frameBase64 = data.frame;
+    // const frameBuffer = Buffer.from(frameBase64, "base64");
   });
 
   // Chuyển tiếp lỗi camera từ Python tới client
-  pythonSocket.on('camera_error', (data) => {
-    socket.emit('camera_error', data);
+  pythonSocket.on("camera_error", (data) => {
+    // socket.emit("camera_error", data);
   });
-
 });
 
 server.listen(3000, () => {
