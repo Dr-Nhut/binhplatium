@@ -38,6 +38,8 @@ html
               th Tên thiết bị
               th Số lượng
               th Thời gian kiểm tra
+              th Vị trí cuối cùng
+              th Trung tâm cuối cùng
           tbody#missing-list
       else
         p.text-center.text-muted Chưa có lịch sử tìm kiếm.
@@ -75,11 +77,24 @@ html
                 }
               }
 
-              const rowHtml = `
+              const lastPosition = device.last_position || "N/A";
+              const lastCenter = device.last_center || "N/A";
+
+              const deviceRowHtml = `
                 <tr>
                   <td>${name}</td>
                   <td>${quantity}</td>
                   <td>${checkedAt}</td>
+                </tr>
+              `;
+
+              const missingRowHtml = `
+                <tr>
+                  <td>${name}</td>
+                  <td>${quantity}</td>
+                  <td>${checkedAt}</td>
+                  <td>${lastPosition}</td>
+                  <td>${lastCenter}</td>
                 </tr>
               `;
 
@@ -90,7 +105,7 @@ html
                 );
 
                 if (!existingRow) {
-                  deviceList.innerHTML += rowHtml;
+                  deviceList.innerHTML += deviceRowHtml;
                 }
 
                 // Xóa thiết bị khỏi bảng "Thiết bị không tìm thấy" nếu đã được tìm thấy
@@ -109,7 +124,7 @@ html
                 );
 
                 if (!existingRow) {
-                  missingList.innerHTML += rowHtml;
+                  missingList.innerHTML += missingRowHtml;
                 }
               }
 
@@ -117,7 +132,9 @@ html
                 d.name === device.name &&
                 d.quantity === device.quantity &&
                 d.checkedAt === device.checkedAt &&
-                d.missing === device.missing
+                d.missing === device.missing &&
+                d.last_position === device.last_position &&
+                d.last_center === device.last_center
               );
               if (existingIndex === -1) {
                 currentDevices.push(device);

@@ -21,6 +21,16 @@ const deviceSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    last_position: {
+      type: mongoose.Schema.Types.Mixed,
+      required: false,
+      default: false,
+    },
+    last_center: {
+      type: mongoose.Schema.Types.Mixed,
+      required: false,
+      default: false,
+    },
   },
   { _id: false }
 );
