@@ -3,10 +3,13 @@ require("dotenv").config();
 const http = require("http");
 const { Server } = require("socket.io");
 const { io: ClientIO } = require("socket.io-client"); // Dùng để kết nối tới Python server
-const connectDb = require("./src/config/db");
+const con = require("./src/config/db");
 const DeviceCheck = require("./src/models/deviceCheck");
 
-connectDb();
+con.connect(function (err) {
+  if (err) throw err;
+  console.log("Connected database!");
+});
 
 const app = express();
 app.use(express.static("public"));

@@ -1,9 +1,9 @@
-const mongoose = require('mongoose')
+var mysql = require("mysql");
 
-const connectDb = () => {
-  mongoose.connect(process.env.DB_URL)
-    .then(() => console.log('Connected to MongoDB database!'))
-    .catch(err => console.error(err));
-}
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "1234",
+});
 
-module.exports = connectDb;
+module.exports = con;
